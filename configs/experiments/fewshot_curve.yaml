@@ -1,0 +1,64 @@
+# Protocol C: Few-Shot Adaptation Curve
+experiment:
+  name: "fewshot_curve"
+  protocol: "C"
+  description: "How many labeled target samples are needed with foundation models?"
+
+  k_values: [0, 1, 2, 5, 10, 20, 50, 100]
+  n_trials: 5  # Random sampling trials per k
+
+  # Fine-tuning strategies
+  finetuning_strategies:
+    - "combined"     # Source + k-shot target (combined training)
+    - "sequential"   # Source pretrained -> k-shot target fine-tune
+
+  # Transfer scenarios (across the difficulty gradient)
+  transfer_pairs:
+    # Medium transfer
+    - source: "deepfish"
+      target: "aqua20"
+
+    - source: "deepfish"
+      target: "cots_gbr"
+
+    # Hard transfer
+    - source: "deepfish"
+      target: "moorea"
+
+    - source: "aqua20"
+      target: "coralscapes"
+
+    # Hardest transfer
+    - source: "deepfish"
+      target: "brackish"
+
+  # Also within-habitat scenarios
+  within_habitat:
+    dataset: "deepfish"
+    leave_one_out: true
+
+  models:
+    - "dinov2_base"
+    - "dinov2_large"
+    - "dinov3_large"
+    - "clip_base"
+    - "mae_base"
+    - "resnet50_imagenet"
+    - "efficientnet_b4"
+
+  adaptations:
+    - "linear_probe"
+    - "lora_r4"
+    - "lora_r16"
+    - "vpt_deep"
+    - "full_finetune"
+
+  seeds: [42, 123, 456]
+
+  # CLIP zero-shot settings
+  clip_zero_shot:
+    enabled: true
+    templates:
+      - "a photo of a {species}"
+      - "an underwater photo of a {species}"
+      - "a marine photograph of a {species}"

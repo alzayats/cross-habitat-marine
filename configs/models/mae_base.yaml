@@ -1,0 +1,18 @@
+# MAE ViT-Base/16 Configuration
+model:
+  name: "mae_base"
+  family: "mae"
+  architecture: "vit_base"
+  source: "huggingface"
+  hf_model_id: "facebook/vit-mae-base"
+  patch_size: 16
+  embed_dim: 768
+  num_heads: 12
+  num_layers: 12
+  image_size: 224
+  use_registers: false
+  feature_dim: 768
+  feature_extraction: "cls_token"
+  pretrained: true
+  lora_target_modules: ["query", "value"]
+  attention_module_pattern: "attention"

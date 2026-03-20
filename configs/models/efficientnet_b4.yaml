@@ -1,0 +1,13 @@
+# EfficientNet-B4 Configuration
+model:
+  name: "efficientnet_b4"
+  family: "cnn"
+  architecture: "efficientnet_b4"
+  source: "timm"
+  timm_model_name: "efficientnet_b4"
+  pretrained: true
+  image_size: 380  # EfficientNet-B4 native resolution
+  feature_dim: 1792
+  feature_extraction: "avg_pool"
+  lora_target_modules: null
+  attention_module_pattern: null

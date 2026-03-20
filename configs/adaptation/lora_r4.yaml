@@ -1,0 +1,18 @@
+# LoRA Rank-4 Adaptation Configuration
+adaptation:
+  name: "lora_r4"
+  type: "lora"
+  freeze_backbone: true  # Base model frozen, only LoRA adapters trained
+  head_type: "linear"
+  lora_rank: 4
+  lora_alpha: 8  # 2 * rank
+  lora_dropout: 0.1
+  learning_rate: 1.0e-4
+  weight_decay: 0.05
+  epochs: 30
+  optimizer: "adamw"
+  scheduler: "cosine"
+  warmup_fraction: 0.05
+  early_stopping_patience: 10
+  merge_weights_at_inference: true
+  label_smoothing: 0.0

@@ -1,0 +1,18 @@
+# LoRA Rank-16 Adaptation Configuration
+adaptation:
+  name: "lora_r16"
+  type: "lora"
+  freeze_backbone: true
+  head_type: "linear"
+  lora_rank: 16
+  lora_alpha: 32  # 2 * rank
+  lora_dropout: 0.1
+  learning_rate: 1.0e-4
+  weight_decay: 0.05
+  epochs: 30
+  optimizer: "adamw"
+  scheduler: "cosine"
+  warmup_fraction: 0.05
+  early_stopping_patience: 10
+  merge_weights_at_inference: true
+  label_smoothing: 0.0

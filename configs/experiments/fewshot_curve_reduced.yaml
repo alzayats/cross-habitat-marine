@@ -1,0 +1,51 @@
+# Protocol C (Reduced): Few-Shot Adaptation Curve
+# 3 pairs, 7 k-values, 3 trials, combined only, 1 seed
+# ~315 runs
+experiment:
+  name: "fewshot_curve_reduced"
+  protocol: "C"
+  description: "Reduced Protocol C: 3 pairs, 7 k-values, 3 trials, combined only"
+
+  transfer_pairs:
+    - source: "deepfish"
+      target: "aqua20"
+      difficulty: "medium"
+
+    - source: "deepfish"
+      target: "moorea"
+      difficulty: "hard"
+
+    - source: "deepfish"
+      target: "brackish"
+      difficulty: "hardest"
+
+  k_values: [0, 1, 2, 5, 10, 20, 50]
+  n_trials: 3
+
+  # Combined only (no sequential in reduced design)
+  finetuning_strategies:
+    - "combined"
+
+  # Foundation models: LP, LoRA r=4 only
+  foundation_models:
+    - "dinov2_base"
+    - "clip_base"
+  foundation_adaptations:
+    - "linear_probe"
+    - "lora_r4"
+
+  # CNN models: LP only
+  cnn_models:
+    - "resnet50_imagenet"
+  cnn_adaptations:
+    - "linear_probe"
+
+  seeds: [42]
+
+  # CLIP zero-shot settings (for k=0)
+  clip_zero_shot:
+    enabled: true
+    templates:
+      - "a photo of a {species}"
+      - "an underwater photo of a {species}"
+      - "a marine photograph of a {species}"

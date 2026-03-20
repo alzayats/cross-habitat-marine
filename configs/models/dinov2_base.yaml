@@ -1,0 +1,20 @@
+# DINOv2 ViT-Base/14 Configuration
+model:
+  name: "dinov2_base"
+  family: "dinov2"
+  architecture: "vit_base"
+  source: "torch_hub"
+  hub_repo: "facebookresearch/dinov2"
+  hub_model: "dinov2_vitb14"
+  hf_model_id: "facebook/dinov2-base"
+  patch_size: 14
+  embed_dim: 768
+  num_heads: 12
+  num_layers: 12
+  image_size: 224
+  use_registers: false
+  feature_dim: 768
+  feature_extraction: "cls_token"  # cls_token or avg_pool
+  pretrained: true
+  lora_target_modules: ["qkv"]  # DINOv2 uses fused qkv
+  attention_module_pattern: "attn.qkv"

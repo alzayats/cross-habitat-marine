@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Outputs (experiment results, checkpoints, figures)
+outputs/
+*.pt
+*.pth
+*.ckpt
+
+# Datasets (download separately)
+datasets/
+
+# Features
+*.npz
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+wandb/
+
+# Environment
+.env
+*.env

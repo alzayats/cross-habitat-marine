@@ -1,0 +1,13 @@
+# ResNet50 Random Initialization Configuration
+model:
+  name: "resnet50_random"
+  family: "cnn"
+  architecture: "resnet50"
+  source: "torchvision"
+  pretrained: false
+  pretrained_weights: null
+  image_size: 224
+  feature_dim: 2048
+  feature_extraction: "avg_pool"
+  lora_target_modules: null
+  attention_module_pattern: null

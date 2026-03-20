@@ -1,0 +1,55 @@
+# Protocol B (Reduced): Cross-Dataset Geographic Transfer
+# 4 transfer pairs from DeepFish, open_set only, 1 seed
+# ~40 runs
+experiment:
+  name: "cross_dataset_reduced"
+  protocol: "B"
+  description: "Reduced Protocol B: 4 transfer pairs, open_set only, 1 seed"
+
+  # Transfer scenarios (ordered by difficulty)
+  transfer_pairs:
+    # Medium transfer
+    - source: "deepfish"
+      target: "aqua20"
+      difficulty: "medium"
+      description: "Tropical fish -> mixed marine species"
+
+    # Hard transfer
+    - source: "deepfish"
+      target: "coralscapes"
+      difficulty: "hard"
+      description: "Tropical fish -> Red Sea benthic"
+
+    - source: "deepfish"
+      target: "moorea"
+      difficulty: "hard"
+      description: "Fish -> coral cover, cross-Pacific"
+
+    # Hardest transfer
+    - source: "deepfish"
+      target: "brackish"
+      difficulty: "hardest"
+      description: "Tropical reef -> cold temperate, different species"
+
+  # Open-set only (feature similarity, always applicable)
+  strategies:
+    - "open_set"
+
+  # Foundation models: LP, LoRA r=4, VPT-Deep
+  foundation_models:
+    - "dinov2_base"
+    - "clip_base"
+  foundation_adaptations:
+    - "linear_probe"
+    - "lora_r4"
+    - "vpt_deep"
+
+  # CNN models: LP, Full Fine-tune
+  cnn_models:
+    - "resnet50_imagenet"
+    - "efficientnet_b4"
+  cnn_adaptations:
+    - "linear_probe"
+    - "full_finetune"
+
+  seeds: [42]

@@ -1,0 +1,41 @@
+# Protocol A: Within-Dataset Cross-Habitat Transfer
+experiment:
+  name: "within_habitat"
+  protocol: "A"
+  description: "Evaluate cross-habitat transfer within DeepFish dataset (20 habitats)"
+
+  dataset: "deepfish"
+
+  # DeepFish has 20 habitats — too many for full permutations (380 pairs)
+  # Strategy: run all 20 leave-one-out + 5 random multi-source configs
+
+  # Leave-one-out: train on 19 habitats, test on 1 (20 experiments)
+  leave_one_out: true
+
+  # Multi-source random splits: train on 15, test on 5
+  multi_source:
+    enabled: true
+    n_train: 15
+    n_test: 5
+    n_configs: 5  # 5 random configurations
+    seed: 42
+
+  models:
+    - "dinov2_base"
+    - "dinov2_large"
+    - "dinov3_large"
+    - "clip_base"
+    - "mae_base"
+    - "resnet50_imagenet"
+    - "resnet50_random"
+    - "efficientnet_b4"
+
+  adaptations:
+    - "linear_probe"
+    - "lora_r4"
+    - "lora_r16"
+    - "vpt_deep"
+    - "full_finetune"
+
+  seeds: [42, 123, 456]
+  val_split: 0.1

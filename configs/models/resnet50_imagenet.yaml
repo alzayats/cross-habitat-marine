@@ -1,0 +1,13 @@
+# ResNet50 ImageNet-pretrained Configuration
+model:
+  name: "resnet50_imagenet"
+  family: "cnn"
+  architecture: "resnet50"
+  source: "torchvision"
+  pretrained: true
+  pretrained_weights: "IMAGENET1K_V2"
+  image_size: 224
+  feature_dim: 2048
+  feature_extraction: "avg_pool"
+  lora_target_modules: null  # Not applicable for CNNs
+  attention_module_pattern: null

@@ -1,0 +1,15 @@
+# Full Fine-Tuning Adaptation Configuration
+adaptation:
+  name: "full_finetune"
+  type: "full_finetune"
+  freeze_backbone: false
+  head_type: "linear"
+  learning_rate: 5.0e-5
+  weight_decay: 0.05
+  epochs: 20
+  optimizer: "adamw"
+  scheduler: "cosine"
+  warmup_fraction: 0.05
+  early_stopping_patience: 10
+  layer_decay: 0.75  # Layer-wise learning rate decay for ViTs
+  label_smoothing: 0.1

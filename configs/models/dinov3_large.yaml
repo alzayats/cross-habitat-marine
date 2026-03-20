@@ -1,0 +1,20 @@
+# DINOv3 ViT-Large Configuration
+model:
+  name: "dinov3_large"
+  family: "dinov3"
+  architecture: "vit_large"
+  source: "huggingface"
+  hf_model_id: "facebook/dinov3-vitl14"
+  hub_repo: "facebookresearch/dinov3"
+  hub_model: "dinov3_vitl14"
+  patch_size: 14
+  embed_dim: 1024
+  num_heads: 16
+  num_layers: 24
+  image_size: 518
+  use_registers: true
+  feature_dim: 1024
+  feature_extraction: "cls_token"
+  pretrained: true
+  lora_target_modules: ["qkv"]
+  attention_module_pattern: "attn.qkv"

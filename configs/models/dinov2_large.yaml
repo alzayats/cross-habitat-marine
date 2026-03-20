@@ -1,0 +1,20 @@
+# DINOv2 ViT-Large/14 with Registers Configuration
+model:
+  name: "dinov2_large"
+  family: "dinov2"
+  architecture: "vit_large"
+  source: "torch_hub"
+  hub_repo: "facebookresearch/dinov2"
+  hub_model: "dinov2_vitl14_reg"
+  hf_model_id: "facebook/dinov2-large"
+  patch_size: 14
+  embed_dim: 1024
+  num_heads: 16
+  num_layers: 24
+  image_size: 518  # Large with registers uses 518x518
+  use_registers: true
+  feature_dim: 1024
+  feature_extraction: "cls_token"
+  pretrained: true
+  lora_target_modules: ["qkv"]
+  attention_module_pattern: "attn.qkv"

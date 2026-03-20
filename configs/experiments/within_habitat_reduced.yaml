@@ -1,0 +1,42 @@
+# Protocol A (Reduced): Within-Dataset Cross-Habitat Transfer
+# 4 models, model-dependent adaptations, 20 habitats, 1 seed
+# ~180 new runs (DINOv2-B LP already done with 3 seeds)
+experiment:
+  name: "within_habitat_reduced"
+  protocol: "A"
+  description: "Reduced Protocol A: 4 models, model-dependent adaptations, 20 habitats, 1 seed"
+
+  dataset: "deepfish"
+
+  # Leave-one-habitat-out: train on 19, test on 1 (20 experiments)
+  leave_one_out: true
+
+  # No multi-source splits in reduced design
+  multi_source:
+    enabled: false
+
+  # Foundation models: LP, LoRA r=4, VPT-Deep
+  foundation_models:
+    - "dinov2_base"
+    - "clip_base"
+  foundation_adaptations:
+    - "linear_probe"
+    - "lora_r4"
+    - "vpt_deep"
+
+  # CNN models: LP, Full Fine-tune
+  cnn_models:
+    - "resnet50_imagenet"
+    - "efficientnet_b4"
+  cnn_adaptations:
+    - "linear_probe"
+    - "full_finetune"
+
+  seeds: [42]
+
+  # DINOv2-B LP already completed with seeds [42, 123, 456] -- skip
+  skip_completed:
+    - model: "dinov2_base"
+      adaptation: "linear_probe"
+
+  val_split: 0.1

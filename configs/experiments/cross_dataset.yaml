@@ -1,0 +1,61 @@
+# Protocol B: Cross-Dataset Geographic Transfer
+experiment:
+  name: "cross_dataset"
+  protocol: "B"
+  description: "Evaluate geographic transfer across marine datasets along a difficulty gradient"
+
+  # Transfer scenarios (ordered by difficulty)
+  transfer_pairs:
+    # Medium transfer
+    - source: "deepfish"
+      target: "aqua20"
+      description: "Tropical fish → mixed marine species"
+
+    - source: "deepfish"
+      target: "cots_gbr"
+      description: "Fish features → starfish pest detection, same ocean (GBR)"
+
+    # Hard transfer
+    - source: "deepfish"
+      target: "moorea"
+      description: "Fish → coral cover, cross-Pacific"
+
+    - source: "aqua20"
+      target: "moorea"
+      description: "Mixed marine → benthic coral, cross-Pacific"
+
+    - source: "aqua20"
+      target: "coralscapes"
+      description: "Tropical → Red Sea benthic, cross-ocean"
+
+    - source: "deepfish"
+      target: "coralscapes"
+      description: "Tropical fish → Red Sea benthic segmentation"
+
+    # Hardest transfer
+    - source: "deepfish"
+      target: "brackish"
+      description: "Tropical reef → cold temperate, different species"
+
+  # Cross-dataset species mapping strategies
+  strategies:
+    - "intersection"   # Only overlapping species
+    - "open_set"       # Feature similarity (always applicable)
+
+  models:
+    - "dinov2_base"
+    - "dinov2_large"
+    - "dinov3_large"
+    - "clip_base"
+    - "mae_base"
+    - "resnet50_imagenet"
+    - "efficientnet_b4"
+
+  adaptations:
+    - "linear_probe"
+    - "lora_r4"
+    - "lora_r16"
+    - "vpt_deep"
+    - "full_finetune"
+
+  seeds: [42, 123, 456]
