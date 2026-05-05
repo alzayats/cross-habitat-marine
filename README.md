@@ -1,10 +1,10 @@
-# How Many Labels Do You Need? Cross-Habitat Transfer for Automated Marine Monitoring with Vision Foundation Models
+# How many labels do you need? A decision framework for cross-habitat marine species recognition
 
 Code for reproducing the experiments in:
 
-> **How Many Labels Do You Need? Cross-Habitat Transfer for Automated Marine Monitoring with Vision Foundation Models**
+> **How many labels do you need? A decision framework for cross-habitat marine species recognition**
 > Alzayat Saleh and Mostafa Rahimi Azghadi
-> *Methods in Ecology and Evolution* (under review)
+> *Ecological Applications* (under review, manuscript ID EAP26-0400)
 
 ## Overview
 
@@ -190,10 +190,11 @@ Linear probe training completes in ~5 minutes per run. LoRA training takes ~40 m
 
 ```bibtex
 @article{saleh2026crosshabitat,
-  title={How Many Labels Do You Need? Cross-Habitat Transfer for Automated Marine Monitoring with Vision Foundation Models},
-  author={Saleh, Alzayat and Azghadi, Mostafa Rahimi},
-  journal={Methods in Ecology and Evolution},
-  year={2026}
+  title={How many labels do you need? A decision framework for cross-habitat marine species recognition},
+  author={Saleh, Alzayat and Rahimi Azghadi, Mostafa},
+  journal={Ecological Applications},
+  year={2026},
+  note={Submitted}
 }
 ```
 
