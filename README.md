@@ -6,6 +6,13 @@ Code for reproducing the experiments in:
 > Alzayat Saleh and Mostafa Rahimi Azghadi
 > Under review
 
+<p align="center">
+  <img src="docs/graphical_abstract.jpg" width="100%"
+       alt="Four-panel summary. (a) A Great Barrier Reef fish dataset is transferred to four other marine datasets ordered by difficulty. (b) Every transfer beats uniform-random and majority-class baselines, by 2.7x to 26x. (c) Balanced accuracy against labelled images per class, with 10 to 20 marked as the recommended budget. (d) A table of which monitoring questions a small labelling budget can and cannot answer.">
+</p>
+
+<sub>Sample images are drawn from the five public datasets described below and are reproduced under their original licences.</sub>
+
 ## Overview
 
 We evaluate whether vision foundation models (DINOv2, CLIP) can replace conventional CNNs for automated underwater image recognition across marine habitats, using five datasets spanning tropical reefs to temperate fjords. Three experimental protocols measure:
@@ -16,7 +23,8 @@ We evaluate whether vision foundation models (DINOv2, CLIP) can replace conventi
 
 **Key finding:** DINOv2 with a frozen linear probe (1,538 trainable parameters) matches or exceeds fully fine-tuned CNNs across all protocols. Approximately 10 to 20 labelled images per class suffice for reliable recognition at a new marine site, where the site presents an established label set under different imaging conditions.
 
-## Repository Structure
+<details>
+<summary><b>Repository structure</b></summary>
 
 ```
 .
@@ -74,7 +82,10 @@ We evaluate whether vision foundation models (DINOv2, CLIP) can replace conventi
 └── LICENSE
 ```
 
-## Setup
+</details>
+
+<details>
+<summary><b>Setup: environment and datasets</b></summary>
 
 ### 1. Environment
 
@@ -118,7 +129,10 @@ data:
   root_dir: "./datasets"  # Change to your path
 ```
 
-## Running Experiments
+</details>
+
+<details>
+<summary><b>Running the experiments</b></summary>
 
 ### Quick Start -- Single Run
 
@@ -191,7 +205,10 @@ Note that `sklearn`'s macro F1 averages over the union of classes present in `y_
 and `y_pred` unless an explicit `labels` argument is given, so the denominator varies
 between runs. Both scripts pass `labels` explicitly.
 
-## Model--Adaptation Configurations
+</details>
+
+<details>
+<summary><b>Model and adaptation configurations</b></summary>
 
 | Model           | Adaptation     | Trainable Params | Protocol A F1 |
 | --------------- | -------------- | ---------------- | ------------- |
@@ -206,13 +223,18 @@ between runs. Both scripts pass `labels` explicitly.
 | EfficientNet-B4 | Linear Probe   | 3,586            | 0.57 +/- 0.22 |
 | EfficientNet-B4 | Full Fine-tune | 17.6M            | 0.67 +/- 0.24 |
 
-## Hardware Requirements
+</details>
+
+<details>
+<summary><b>Hardware requirements</b></summary>
 
 - **Minimum:** 16 GB GPU (for linear probes and LoRA)
 - **Recommended:** 24 GB GPU (for full fine-tuning of EfficientNet-B4)
 - **Tested on:** NVIDIA RTX 4090 (24 GB)
 
 Linear probe training completes in ~5 minutes per run. LoRA training takes ~40 minutes. Full fine-tuning takes ~15 minutes for CNNs.
+
+</details>
 
 ## Citation
 
