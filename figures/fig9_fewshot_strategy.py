@@ -117,6 +117,7 @@ def _draw_kshot_bars(curve_data: Dict, ax: plt.Axes) -> None:
     x = np.arange(n_combos)
     width = 0.8 / n_ks
 
+    bar_tops: list = []
     for ki, k in enumerate(k_show):
         vals = []
         errs = []
@@ -139,6 +140,9 @@ def _draw_kshot_bars(curve_data: Dict, ax: plt.Axes) -> None:
                yerr=errs, color=color, alpha=0.85, label=f"k={k}",
                edgecolor="white", linewidth=0.5,
                capsize=1.5, error_kw={"linewidth": 0.6, "alpha": 0.6})
+        # The y-limit was previously hardcoded at 0.85, which clipped the upper
+        # error bars. Track the extent so it can be derived from the data.
+        bar_tops.extend(v + e for v, e in zip(vals, errs))
 
     combo_labels = [
         f"{MODEL_SHORT.get(m, m)} {ADAPT_SHORT.get(a, a)}"
@@ -149,8 +153,8 @@ def _draw_kshot_bars(curve_data: Dict, ax: plt.Axes) -> None:
     ax.set_ylabel("Balanced Acc. (mean across pairs)", fontsize=7)
     ax.set_title("Performance at k=10 vs k=100", fontsize=9,
                  fontweight="bold", pad=6)
-    ax.set_ylim(0, 0.85)
-    ax.legend(fontsize=6.5, loc="upper left", framealpha=0.9, edgecolor="#DDD")
+    ax.set_ylim(0, max(bar_tops) * 1.10 if bar_tops else 0.85)
+    ax.legend(fontsize=6.5, loc="lower right", framealpha=0.9, edgecolor="#DDD")
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     ax.grid(axis="y", alpha=0.3, linewidth=0.5)

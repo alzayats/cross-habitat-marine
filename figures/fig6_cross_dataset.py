@@ -28,11 +28,16 @@ from figures.plot_utils import (
 
 logger = logging.getLogger(__name__)
 
-# Transfer pairs in difficulty order (matching run_protocol_b.sh)
+# Transfer pairs in difficulty order, by observed mean macro F1.
+#
+# Moorea and Brackish are swapped relative to the original submission. The published
+# ordering rested on Moorea's macro F1 of 0.165, which was depressed by the label-space
+# bug corrected in analysis/reeval_protocol_b.py. On corrected values the means are
+# AQUA20 0.643 > Moorea 0.276 > Brackish 0.240 > Coralscapes 0.190.
 PAIR_ORDER = [
     ("deepfish", "aqua20"),
-    ("deepfish", "brackish"),
     ("deepfish", "moorea"),
+    ("deepfish", "brackish"),
     ("deepfish", "coralscapes"),
 ]
 
@@ -45,8 +50,8 @@ PAIR_LABELS = {
 
 PAIR_DIFFICULTY = {
     ("deepfish", "aqua20"): "Easiest",
-    ("deepfish", "brackish"): "Medium",
-    ("deepfish", "moorea"): "Hard",
+    ("deepfish", "moorea"): "Medium",
+    ("deepfish", "brackish"): "Hard",
     ("deepfish", "coralscapes"): "Hardest",
 }
 
@@ -66,9 +71,18 @@ MODEL_SHORT = {
 
 
 def load_cross_dataset_df(results_dir: str) -> pd.DataFrame:
-    """Load Protocol B results into a DataFrame."""
+    """Load Protocol B results into a DataFrame.
+
+    Prefers ``results_fixed.json`` where it exists. Those files carry the corrected
+    label-space evaluation (see analysis/reeval_protocol_b.py); the original
+    ``results.json`` compared prototypes indexed in the target train split's label
+    space against test-split labels, which is invalid wherever the two splits hold
+    different class sets (Moorea, Coralscapes).
+    """
     rows = []
-    for path in sorted(Path(results_dir).rglob("results.json")):
+    for run_dir in sorted({p.parent for p in Path(results_dir).rglob("results.json")}):
+        fixed = run_dir / "results_fixed.json"
+        path = fixed if fixed.exists() else run_dir / "results.json"
         try:
             with open(path) as f:
                 r = json.load(f)
@@ -76,7 +90,14 @@ def load_cross_dataset_df(results_dir: str) -> pd.DataFrame:
             continue
 
         test = r.get("test_metrics", {})
+        # results_fixed.json carries no training history; fall back to the original.
         train = r.get("train_results", {})
+        if not train and fixed.exists():
+            try:
+                with open(run_dir / "results.json") as f:
+                    train = json.load(f).get("train_results", {})
+            except Exception:
+                train = {}
 
         # Get best val F1 from training history
         history = train.get("history", [])

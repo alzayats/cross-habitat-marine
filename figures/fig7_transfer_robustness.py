@@ -25,14 +25,16 @@ from figures.plot_utils import (
 
 logger = logging.getLogger(__name__)
 
+# Difficulty order by observed mean macro F1 on corrected results; Moorea and Brackish
+# are swapped relative to the original submission (see fig6_cross_dataset.py).
 PAIR_ORDER = [
     ("deepfish", "aqua20"),
-    ("deepfish", "brackish"),
     ("deepfish", "moorea"),
+    ("deepfish", "brackish"),
     ("deepfish", "coralscapes"),
 ]
 
-PAIR_LABELS = ["DF→AQ20", "DF→Brack", "DF→Moorea", "DF→Coral"]
+PAIR_LABELS = ["DF→AQ20", "DF→Moorea", "DF→Brack", "DF→Coral"]
 
 ADAPT_SHORT = {
     "linear_probe": "LP", "lora_r4": "LoRA",
@@ -45,9 +47,15 @@ MODEL_SHORT = {
 
 
 def _load_protocol_b(results_dir: str) -> pd.DataFrame:
-    """Load Protocol B results."""
+    """Load Protocol B results.
+
+    Prefers ``results_fixed.json`` (corrected label-space evaluation) where present;
+    see analysis/reeval_protocol_b.py.
+    """
     rows = []
-    for path in sorted(Path(results_dir).rglob("results.json")):
+    for run_dir in sorted({p.parent for p in Path(results_dir).rglob("results.json")}):
+        fixed = run_dir / "results_fixed.json"
+        path = fixed if fixed.exists() else run_dir / "results.json"
         try:
             with open(path) as f:
                 r = json.load(f)

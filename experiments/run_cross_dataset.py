@@ -132,6 +132,40 @@ def _filter_dataset_by_species(
     ]
 
 
+def align_label_spaces(*datasets: BaseMarineDataset) -> Dict[str, int]:
+    """Force several datasets onto one shared class-name -> index mapping.
+
+    ``BaseMarineDataset._build_class_mapping`` derives ``class_to_idx`` from the
+    classes present in a single split. Open-set evaluation builds prototypes from the
+    target *train* split and scores them against the target *test* split, so whenever
+    those two splits contain different class sets the same integer denotes different
+    classes on each side and the comparison is meaningless.
+
+    This is not hypothetical: Moorea has 8 train / 7 test classes (POCILL is absent
+    from test) and Coralscapes has 21 / 15, leaving only one aligned index. AQUA20 and
+    Brackish are unaffected because their splits share identical class sets.
+
+    Labels are resolved through ``class_to_idx`` inside ``__getitem__``, so rewriting
+    the mapping is sufficient -- no need to touch ``samples``.
+
+    Args:
+        *datasets: Datasets to place on a common label space.
+
+    Returns:
+        The shared class-name -> index mapping.
+    """
+    union = sorted(set().union(*(set(d.class_to_idx) for d in datasets)))
+    shared = {cls: idx for idx, cls in enumerate(union)}
+    for dataset in datasets:
+        dataset.class_to_idx = dict(shared)
+        dataset.idx_to_class = {idx: cls for cls, idx in shared.items()}
+    logger.info(
+        "Aligned label spaces across %d datasets: %d shared classes",
+        len(datasets), len(shared),
+    )
+    return shared
+
+
 def run_single_cross_dataset(
     model_name: str,
     adaptation_name: str,
@@ -207,6 +241,11 @@ def run_single_cross_dataset(
         target_train_ds = _get_dataset(
             target_name, data_root, "train", test_transform, image_size,
         )
+        # Prototypes come from the target train split and are scored against the
+        # target test split, so both must share one label space (see
+        # align_label_spaces). Without this, targets whose splits hold different
+        # class sets are evaluated against misaligned integer labels.
+        align_label_spaces(target_train_ds, target_ds)
         logger.info(
             "Open-set: source classes=%d, target classes=%d, target train=%d",
             source_ds.num_classes, target_train_ds.num_classes, len(target_train_ds),

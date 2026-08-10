@@ -26,6 +26,19 @@ ROW_COLORS = {
 }
 
 
+
+def _pretty_label(raw: str) -> str:
+    """Render a dataset class code as a short human-readable label."""
+    MOOREA = {
+        "CCA": "CCA", "SAND": "Sand", "TURF": "Turf algae",
+        "PORIT": "Porites", "MACRO": "Macroalgae", "POCILL": "Pocillopora",
+        "MONTI": "Montipora", "PAVON": "Pavona",
+    }
+    if raw in MOOREA:
+        return MOOREA[raw]
+    return raw.replace("_", " ").replace("-", " ")
+
+
 def _sample_diverse_images(
     dir_path: Path,
     n_samples: int,
@@ -49,7 +62,7 @@ def _sample_diverse_images(
             else:
                 imgs = list(hab_dir.rglob("*.jpg"))
             if imgs:
-                results.append((rng.choice(imgs), f"Hab. {hab_dir.name}"))
+                results.append((rng.choice(imgs), f"Habitat {hab_dir.name} (fish)"))
         return results
 
     elif strategy == "class_subdirs":
@@ -57,13 +70,13 @@ def _sample_diverse_images(
         if not class_dirs:
             imgs = list(dir_path.rglob("*.jpg")) + list(dir_path.rglob("*.png"))
             chosen = rng.sample(imgs, min(n_samples, len(imgs)))
-            return [(img, img.parent.name) for img in chosen]
+            return [(img, _pretty_label(img.parent.name)) for img in chosen]
         chosen = rng.sample(class_dirs, min(n_samples, len(class_dirs)))
         results = []
         for cls_dir in chosen:
             imgs = list(cls_dir.glob("*.jpg")) + list(cls_dir.glob("*.png"))
             if imgs:
-                results.append((rng.choice(imgs), cls_dir.name))
+                results.append((rng.choice(imgs), _pretty_label(cls_dir.name)))
         return results
 
     elif strategy == "video_extract":
@@ -84,10 +97,27 @@ def _sample_diverse_images(
                 if ret:
                     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                     img = Image.fromarray(frame_rgb)
-                    results.append((img, sp_dir.name))
+                    results.append((img, _pretty_label(sp_dir.name)))
             finally:
                 cap.release()
         return results
+
+    elif strategy in ("moorea_classes", "coralscapes_classes"):
+        # Labels for these two datasets are derived (dominant annotation point /
+        # dominant mask class) rather than encoded in the directory tree, so we use
+        # the project loaders to recover them. One image per class, most frequent
+        # classes first, so every row of the figure carries class information
+        # so the figure is consistent across rows.
+        import yaml
+        from experiments.run_cross_dataset import _get_dataset
+        name = "moorea" if strategy == "moorea_classes" else "coralscapes"
+        cfg = yaml.safe_load(Path("configs/base_config.yaml").read_text())
+        ds = _get_dataset(name, cfg["data"]["root_dir"], split="train", transform=None)
+        by_class: dict = {}
+        for smp in ds.samples:
+            by_class.setdefault(smp["label"], []).append(smp["image_path"])
+        ordered = sorted(by_class.items(), key=lambda kv: -len(kv[1]))[:n_samples]
+        return [(rng.choice(paths), _pretty_label(lbl)) for lbl, paths in ordered]
 
     elif strategy == "flat_random":
         imgs = list(dir_path.rglob("*.jpg")) + list(dir_path.rglob("*.png"))
@@ -102,31 +132,31 @@ DATASET_CONFIGS = [
         "name": "DeepFish",
         "subdir": "Classification",
         "strategy": "deepfish_habitats",
-        "description": "20 habitats, binary (fish/empty)",
+        "description": "20 habitats, fish/empty",
     },
     {
         "name": "AQUA20",
         "subdir": "train_images",
         "strategy": "class_subdirs",
-        "description": "20 marine species",
+        "description": "20 coarse categories",
     },
     {
         "name": "Moorea Corals",
         "subdir": "knb-lter-mcr.5006.3/MCR_LTER_ComputerVision_LabeledCorals_2009_20120523/2009",
-        "strategy": "flat_random",
-        "description": "Reef quadrat photos",
+        "strategy": "moorea_classes",
+        "description": "8 benthic classes",
     },
     {
         "name": "Coralscapes",
         "subdir": "train/images",
-        "strategy": "flat_random",
-        "description": "14-class coral segmentation",
+        "strategy": "coralscapes_classes",
+        "description": "21 benthic classes",
     },
     {
         "name": "Brackish",
         "subdir": "dataset/videos",
         "strategy": "video_extract",
-        "description": "6 species, brackish water",
+        "description": "6 coarse categories",
     },
 ]
 
@@ -192,7 +222,7 @@ def generate_fig2(
         n_datasets, n_samples + 1,
         width_ratios=[0.32] + [1.0] * n_samples,
         hspace=0.12, wspace=0.06,
-        left=0.01, right=0.99, top=0.96, bottom=0.01,
+        left=0.01, right=0.99, top=0.995, bottom=0.01,
     )
 
     for row, cfg in enumerate(configs):
@@ -263,10 +293,6 @@ def generate_fig2(
                 spine.set_color("#999")
                 spine.set_linewidth(0.6)
 
-    fig.suptitle(
-        "Representative Samples from Each Dataset",
-        fontsize=10, fontweight="bold", y=0.99,
-    )
 
     if output_path:
         save_figure(fig, output_path)
@@ -275,11 +301,14 @@ def generate_fig2(
 
 
 if __name__ == "__main__":
+    import yaml
+    root = Path(yaml.safe_load(
+        Path("configs/base_config.yaml").read_text())["data"]["root_dir"])
     datasets = {
-        "DeepFish": "./datasets/DeepFish",
-        "AQUA20": "./datasets/AQUA20_dataset",
-        "Moorea Corals": "./datasets/Moorea_Labeled_Corals",
-        "Coralscapes": "./datasets/Coralscapes_dataset",
-        "Brackish": "./datasets/Brackish_dataset",
+        "DeepFish": str(root / "DeepFish"),
+        "AQUA20": str(root / "AQUA20_dataset"),
+        "Moorea Corals": str(root / "Moorea_Labeled_Corals"),
+        "Coralscapes": str(root / "Coralscapes_dataset"),
+        "Brackish": str(root / "Brackish_dataset"),
     }
     generate_fig2(datasets, output_path="outputs/figures/fig2_dataset_samples")
