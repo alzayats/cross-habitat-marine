@@ -1,20 +1,20 @@
-# How many labels do you need? A decision framework for cross-habitat marine species recognition
+# How many labels do you need? A decision framework for cross-habitat marine biodiversity monitoring
 
 Code for reproducing the experiments in:
 
-> **How many labels do you need? A decision framework for cross-habitat marine species recognition**
+> **How many labels do you need? A decision framework for cross-habitat marine biodiversity monitoring**
 > Alzayat Saleh and Mostafa Rahimi Azghadi
-> *Ecological Applications* (under review, manuscript ID EAP26-0400)
+> Under review
 
 ## Overview
 
-We evaluate whether vision foundation models (DINOv2, CLIP) can replace conventional CNNs for automated underwater species recognition across marine habitats, using five datasets spanning tropical reefs to temperate fjords. Three experimental protocols measure:
+We evaluate whether vision foundation models (DINOv2, CLIP) can replace conventional CNNs for automated underwater image recognition across marine habitats, using five datasets spanning tropical reefs to temperate fjords. Three experimental protocols measure:
 
 - **Protocol A** -- Within-habitat transfer (20 DeepFish reef habitats, 240 runs)
 - **Protocol B** -- Cross-dataset transfer along a difficulty gradient (40 runs)
 - **Protocol C** -- Few-shot adaptation curves, k = 0 to 100 labelled samples per class (648 runs)
 
-**Key finding:** DINOv2 with a frozen linear probe (1,538 trainable parameters) matches or exceeds fully fine-tuned CNNs across all protocols. Approximately 10 labelled images per species suffice for reliable recognition at a new marine site.
+**Key finding:** DINOv2 with a frozen linear probe (1,538 trainable parameters) matches or exceeds fully fine-tuned CNNs across all protocols. Approximately 10 to 20 labelled images per class suffice for reliable recognition at a new marine site, where the site presents an established label set under different imaging conditions.
 
 ## Repository Structure
 
@@ -29,10 +29,10 @@ We evaluate whether vision foundation models (DINOv2, CLIP) can replace conventi
 │   ├── download_datasets.sh    # Download/verify all five datasets
 │   ├── base_dataset.py         # Abstract base class for marine datasets
 │   ├── deepfish_dataset.py     # DeepFish (20 habitats, GBR)
-│   ├── aqua20_dataset.py       # AQUA20 (20 marine species)
+│   ├── aqua20_dataset.py       # AQUA20 (20 coarse marine categories)
 │   ├── moorea_dataset.py       # Moorea Labeled Corals (9 benthic classes)
 │   ├── coralscapes_dataset.py  # Coralscapes (14 benthic classes, Red Sea)
-│   ├── brackish_dataset.py     # Brackish (6 species, temperate Denmark)
+│   ├── brackish_dataset.py     # Brackish (6 coarse categories, temperate Denmark)
 │   ├── fewshot_sampler.py      # k-shot support/query splitting
 │   └── augmentations.py        # Train/test transforms
 ├── models/                     # Model definitions
@@ -218,11 +218,10 @@ Linear probe training completes in ~5 minutes per run. LoRA training takes ~40 m
 
 ```bibtex
 @article{saleh2026crosshabitat,
-  title={How many labels do you need? A decision framework for cross-habitat marine species recognition},
+  title={How many labels do you need? A decision framework for cross-habitat marine biodiversity monitoring},
   author={Saleh, Alzayat and Rahimi Azghadi, Mostafa},
-  journal={Ecological Applications},
   year={2026},
-  note={Submitted}
+  note={Under review}
 }
 ```
 
