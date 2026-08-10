@@ -60,6 +60,8 @@ We evaluate whether vision foundation models (DINOv2, CLIP) can replace conventi
 │   ├── extract_features.py     # Feature extraction for t-SNE
 │   ├── tsne_visualization.py   # t-SNE projections
 │   ├── compute_efficiency.py   # Parameter counts and training times
+│   ├── protocol_b_baselines.py # Trivial baselines for Protocol B
+│   ├── reeval_protocol_b.py    # Re-score Protocol B on a fixed label space
 │   └── ...
 ├── figures/                    # Figure generation (Figs 1-12)
 │   ├── generate_all_figures.py # Master figure script
@@ -162,6 +164,32 @@ python -m figures.generate_all_figures
 ```
 
 Figures are saved to `outputs/figures/` as PDF and PNG.
+
+### Protocol B baselines and re-evaluation
+
+Protocol B builds class prototypes from the target training split and scores them
+against the target test split. Both splits must share one label space; where they hold
+different class sets, per-split integer mappings do not correspond. `align_label_spaces`
+in `experiments/run_cross_dataset.py` enforces this.
+
+To re-score already-trained runs on the corrected label space, without retraining:
+
+```bash
+python -m analysis.reeval_protocol_b                    # affected targets
+python -m analysis.reeval_protocol_b --targets brackish # control: expect no change
+```
+
+Results are written to `results_fixed.json` beside each run's `results.json`.
+
+To report uniform-random and majority-class baselines over an explicit fixed label set:
+
+```bash
+python -m analysis.protocol_b_baselines --recompute
+```
+
+Note that `sklearn`'s macro F1 averages over the union of classes present in `y_true`
+and `y_pred` unless an explicit `labels` argument is given, so the denominator varies
+between runs. Both scripts pass `labels` explicitly.
 
 ## Model--Adaptation Configurations
 
