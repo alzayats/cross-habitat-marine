@@ -21,7 +21,7 @@ We evaluate whether vision foundation models (DINOv2, CLIP) can replace conventi
 - **Protocol B** -- Cross-dataset transfer along a difficulty gradient (40 runs)
 - **Protocol C** -- Few-shot adaptation curves, k = 0 to 100 labelled samples per class (648 runs)
 
-**Key finding:** DINOv2 with a frozen linear probe (1,538 trainable parameters) matches or exceeds fully fine-tuned CNNs across all protocols. Approximately 10 to 20 labelled images per class suffice for reliable recognition at a new marine site, where the site presents an established label set under different imaging conditions.
+**Key finding:** DINOv2 with a frozen linear probe (1,538 trainable parameters) matches or exceeds fully fine-tuned CNNs in every setting tested except the hardest cross-taxon transfer, where a fully fine-tuned ResNet-50 is marginally ahead. Approximately 10 to 20 labelled images per class suffice for reliable recognition at a new marine site, where the site presents an established label set under different imaging conditions.
 
 <details>
 <summary><b>Repository structure</b></summary>
