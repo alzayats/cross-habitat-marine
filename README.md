@@ -87,6 +87,17 @@ We evaluate whether vision foundation models (DINOv2, CLIP) can replace conventi
 <details>
 <summary><b>Setup: environment and datasets</b></summary>
 
+All scripts read the dataset location from `data.root_dir` in
+`configs/base_config.yaml`, which defaults to `./datasets`. If your data lives
+elsewhere, symlink it rather than editing the config, so the tracked files stay
+identical across machines:
+
+```bash
+ln -s /path/to/your/datasets datasets
+```
+
+`datasets/` is gitignored, so the symlink is never committed.
+
 ### 1. Environment
 
 ```bash
