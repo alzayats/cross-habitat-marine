@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 def load_results_df(
     results_dir: str = "./outputs/within_habitat",
+    seed: int | None = 42,
 ) -> pd.DataFrame:
     """Load all results.json files into a tidy DataFrame.
 
@@ -23,6 +24,8 @@ def load_results_df(
 
     Args:
         results_dir: Directory containing experiment subdirectories.
+        seed: If set, filter to this seed only (default: 42 to match paper).
+              Set to None to include all seeds.
 
     Returns:
         DataFrame with columns: model, adaptation, target_habitat, seed,
@@ -77,6 +80,12 @@ def load_results_df(
     if df.empty:
         logger.warning("No results found in %s", results_dir)
         return df
+
+    # Filter to requested seed (default: 42 to match paper Protocol A numbers)
+    if seed is not None:
+        pre_count = len(df)
+        df = df[df["seed"] == seed].reset_index(drop=True)
+        logger.info("Filtered to seed=%d: %d -> %d runs", seed, pre_count, len(df))
 
     # Fix CLIP param counts: text encoder (63M params) was incorrectly
     # included as trainable. Only the head/LoRA/VPT params are truly trainable.
