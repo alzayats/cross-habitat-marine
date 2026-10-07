@@ -8,7 +8,7 @@ Code for reproducing the experiments in:
 
 <p align="center">
   <img src="docs/graphical_abstract.jpg" width="100%"
-       alt="Four-panel summary. (a) A Great Barrier Reef fish dataset is transferred to four other marine datasets ordered by difficulty. (b) Every transfer beats uniform-random and majority-class baselines, by 2.7x to 26x. (c) Balanced accuracy against labelled images per class, with 10 to 20 marked as the recommended budget for near transfers. (d) A table of which monitoring questions a small labelling budget can and cannot answer.">
+       alt="Four-panel summary. (a) A Great Barrier Reef fish dataset is transferred to four other marine datasets ordered by difficulty. (b) Every transfer beats uniform-random and majority-class baselines, by 2.7x to 26x. (c) Balanced accuracy against labelled images per class, with 10 to 20 marked as the recommended budget within a taxon and biome. (d) A table of which monitoring questions a small labelling budget can and cannot answer.">
 </p>
 
 <sub>Sample images are drawn from the five public datasets described below and are reproduced under their original licences.</sub>

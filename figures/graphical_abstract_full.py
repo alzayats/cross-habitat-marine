@@ -267,7 +267,7 @@ def panel_c(ax, pc):
                 label=lab.split("\n")[0])
 
     ax.axvspan(10, 20, color="#FFD24D", alpha=0.32, lw=0, zorder=0)
-    ax.text(14, 0.045, "10–20 labels per class\n(near transfers)", ha="center", va="bottom",
+    ax.text(14, 0.045, "10–20 labels per class\n(same taxon & biome)", ha="center", va="bottom",
             fontsize=8.4, fontweight="bold", color="#7A5A00", zorder=4)
 
     ax.set_xscale("log"); ax.set_xticks(K_VALUES)
@@ -280,7 +280,7 @@ def panel_c(ax, pc):
     ax.legend(fontsize=7.2, loc="lower right", framealpha=0.94, edgecolor=RULE)
     ax.spines["top"].set_visible(False); ax.spines["right"].set_visible(False)
     ax.grid(axis="y", alpha=0.22, lw=0.6); ax.tick_params(labelsize=8)
-    ax.annotate("returns diminish beyond ~20\non near transfers only", xy=(46, 0.865),
+    ax.annotate("returns diminish beyond ~20\nonly within a taxon and biome", xy=(46, 0.865),
                 xytext=(1.3, 0.985), fontsize=7.6, color=INK, va="top",
                 arrowprops=dict(arrowstyle="->", color=INK, lw=1.0,
                                 connectionstyle="arc3,rad=-0.16"))
@@ -315,8 +315,8 @@ def panel_d(ax):
                      "Labels are\ncoarser than species, so the effort saving is an "
                      "upper bound.",
             fontsize=7.8, color=MUTED, va="top")
-    ax.text(0, 0.72, "10–20 labels per class on a near transfer (1–4 h), 50+ across taxa "
-                     "or biomes   ·   frozen DINOv2 + linear probe  ·  1,538 parameters",
+    ax.text(0, 0.72, "10–20 labels per class within a taxon and biome (1–4 h), 50+ across "
+                     "taxa or biomes   ·   frozen DINOv2 + linear probe  ·  1,538 parameters",
             fontsize=8.2, color=INK, va="top", fontweight="bold")
 
 
