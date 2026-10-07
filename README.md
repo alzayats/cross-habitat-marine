@@ -8,7 +8,7 @@ Code for reproducing the experiments in:
 
 <p align="center">
   <img src="docs/graphical_abstract.jpg" width="100%"
-       alt="Four-panel summary. (a) A Great Barrier Reef fish dataset is transferred to four other marine datasets ordered by difficulty. (b) Every transfer beats uniform-random and majority-class baselines, by 2.7x to 26x. (c) Balanced accuracy against labelled images per class, with 10 to 20 marked as the recommended budget. (d) A table of which monitoring questions a small labelling budget can and cannot answer.">
+       alt="Four-panel summary. (a) A Great Barrier Reef fish dataset is transferred to four other marine datasets ordered by difficulty. (b) Every transfer beats uniform-random and majority-class baselines, by 2.7x to 26x. (c) Balanced accuracy against labelled images per class, with 10 to 20 marked as the recommended budget for near transfers. (d) A table of which monitoring questions a small labelling budget can and cannot answer.">
 </p>
 
 <sub>Sample images are drawn from the five public datasets described below and are reproduced under their original licences.</sub>
@@ -21,7 +21,7 @@ We evaluate whether vision foundation models (DINOv2, CLIP) can replace conventi
 - **Protocol B** -- Cross-dataset transfer along a difficulty gradient (40 runs)
 - **Protocol C** -- Few-shot adaptation curves, k = 0 to 100 labelled samples per class (648 runs)
 
-**Key finding:** DINOv2 with a frozen linear probe (1,538 trainable parameters) matches or exceeds fully fine-tuned CNNs in every setting tested except the hardest cross-taxon transfer, where a fully fine-tuned ResNet-50 is marginally ahead. Approximately 10 to 20 labelled images per class suffice for reliable recognition at a new marine site, where the site presents an established label set under different imaging conditions.
+**Key finding:** DINOv2 with a frozen linear probe (1,538 trainable parameters) matches or exceeds fully fine-tuned CNNs in every setting tested except the hardest cross-taxon transfer, where a fully fine-tuned ResNet-50 is marginally ahead. The labelling budget needed scales with how far the transfer reaches: approximately 10 to 20 labelled images per class suffice at a new site that presents an established label set and the same broad taxon under different imaging conditions, while transfers that cross taxa or biomes need 50 or more per class.
 
 <details>
 <summary><b>Repository structure</b></summary>

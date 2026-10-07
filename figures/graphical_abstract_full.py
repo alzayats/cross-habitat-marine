@@ -121,15 +121,18 @@ def protocol_b():
 
 
 def protocol_c():
+    """Few-shot curves, averaged over every model--adaptation combination.
+
+    Read from the per-run fewshot_curve.json summaries rather than the
+    k*_trial*/results.json directories: only the two LoRA runs ever wrote those
+    per-trial directories, so globbing them silently averaged two of the six
+    combinations and omitted the recommended one (DINOv2 + linear probe).
+    """
     agg = defaultdict(list)
-    for f in glob.glob("outputs/fewshot_curve/*/k*_trial*/results.json"):
-        m = re.search(r"deepfish_to_(\w+?)_combined_seed42/k(\d+)_trial", f)
-        if m:
-            try:
-                agg[(m.group(1), int(m.group(2)))].append(
-                    json.load(open(f))["balanced_accuracy"])
-            except Exception:
-                pass
+    for p in glob.glob("outputs/fewshot_curve/*/fewshot_curve.json"):
+        d = json.load(open(p))
+        for k, trials in d["raw_results"].items():
+            agg[(d["target"], int(k))].extend(t["balanced_accuracy"] for t in trials)
     return agg
 
 
@@ -241,7 +244,7 @@ def panel_b(ax, pb):
     ax.set_xticklabels([l.split("\n")[0] for _, l in PAIRS], fontsize=8.2)
     ax.set_ylabel("Macro F1 (cross-dataset transfer)", fontsize=8.6)
     ax.set_ylim(0, 1.0)
-    ax.set_title("Moving to a new site costs accuracy —\nbut transfer is always real",
+    ax.set_title("Moving to a new site costs accuracy,\nbut transfer is always real",
                  fontsize=10, fontweight="bold", pad=8, loc="left")
     h, l = ax.get_legend_handles_labels()
     order = [l.index("best model"), l.index("mean of 10 models"), l.index("best trivial baseline")]
@@ -264,7 +267,7 @@ def panel_c(ax, pc):
                 label=lab.split("\n")[0])
 
     ax.axvspan(10, 20, color="#FFD24D", alpha=0.32, lw=0, zorder=0)
-    ax.text(14, 0.045, "10–20 labels\nper class", ha="center", va="bottom",
+    ax.text(14, 0.045, "10–20 labels per class\n(near transfers)", ha="center", va="bottom",
             fontsize=8.4, fontweight="bold", color="#7A5A00", zorder=4)
 
     ax.set_xscale("log"); ax.set_xticks(K_VALUES)
@@ -272,13 +275,13 @@ def panel_c(ax, pc):
     ax.set_xlim(0.85, 122); ax.set_ylim(0, 1.0)
     ax.set_xlabel("Labelled images per class at the new site  ($k$)", fontsize=8.6)
     ax.set_ylabel("Balanced accuracy", fontsize=8.6)
-    ax.set_title("A few labels go a long way — how far\ndepends on the transfer",
+    ax.set_title("A few labels go a long way, but how far\ndepends on the transfer",
                  fontsize=10, fontweight="bold", pad=8, loc="left")
     ax.legend(fontsize=7.2, loc="lower right", framealpha=0.94, edgecolor=RULE)
     ax.spines["top"].set_visible(False); ax.spines["right"].set_visible(False)
     ax.grid(axis="y", alpha=0.22, lw=0.6); ax.tick_params(labelsize=8)
-    ax.annotate("diminishing returns\nbeyond ~20", xy=(46, 0.865),
-                xytext=(1.5, 0.955), fontsize=7.6, color=INK, va="top",
+    ax.annotate("returns diminish beyond ~20\non near transfers only", xy=(46, 0.865),
+                xytext=(1.3, 0.985), fontsize=7.6, color=INK, va="top",
                 arrowprops=dict(arrowstyle="->", color=INK, lw=1.0,
                                 connectionstyle="arc3,rad=-0.16"))
 
@@ -312,8 +315,8 @@ def panel_d(ax):
                      "Labels are\ncoarser than species, so the effort saving is an "
                      "upper bound.",
             fontsize=7.8, color=MUTED, va="top")
-    ax.text(0, 0.72, "10–20 labels per class  ≈  1–4 hours of annotation per site   ·   "
-                     "frozen DINOv2 + linear probe  ·  1,538 trainable parameters",
+    ax.text(0, 0.72, "10–20 labels per class on a near transfer (1–4 h), 50+ across taxa "
+                     "or biomes   ·   frozen DINOv2 + linear probe  ·  1,538 parameters",
             fontsize=8.2, color=INK, va="top", fontweight="bold")
 
 
