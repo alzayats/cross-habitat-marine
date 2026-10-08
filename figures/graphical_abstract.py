@@ -39,17 +39,18 @@ OUT_STEM = "outputs/figures/graphical_abstract"
 
 
 def load_curves(root: str = "outputs/fewshot_curve") -> dict:
-    """Mean balanced accuracy per target per k, across all model-adaptation combos."""
+    """Mean balanced accuracy per target per k, across all model-adaptation combos.
+
+    Read from the per-run fewshot_curve.json summaries. Globbing the
+    k*_trial*/results.json directories instead would cover only the two LoRA runs,
+    which are the only ones that wrote them, and would silently drop the four
+    linear-probe runs including the configuration the paper recommends.
+    """
     agg: dict = defaultdict(list)
-    for f in glob.glob(f"{root}/*/k*_trial*/results.json"):
-        m = re.search(r"deepfish_to_(\w+?)_combined_seed42/k(\d+)_trial", f)
-        if not m:
-            continue
-        try:
-            agg[(m.group(1), int(m.group(2)))].append(
-                json.load(open(f))["balanced_accuracy"])
-        except Exception:
-            continue
+    for p in glob.glob(f"{root}/*/fewshot_curve.json"):
+        d = json.load(open(p))
+        for k, trials in d["raw_results"].items():
+            agg[(d["target"], int(k))].extend(t["balanced_accuracy"] for t in trials)
     return agg
 
 
@@ -69,7 +70,7 @@ def generate(output_stem: str = OUT_STEM) -> None:
 
     # Shade the recommended budget.
     ax.axvspan(10, 20, color="#FFD24D", alpha=0.30, zorder=0, lw=0)
-    ax.text(14, 0.055, "10–20 labels\nper class", ha="center", va="bottom",
+    ax.text(14, 0.055, "10–20 labels per class\n(same taxon & biome)", ha="center", va="bottom",
             fontsize=9.5, fontweight="bold", color="#7A5A00", zorder=4)
 
     ax.set_xscale("log")
@@ -95,7 +96,7 @@ def generate(output_stem: str = OUT_STEM) -> None:
 
     # Diminishing returns hold clearly for the easier transfers; the hardest is still
     # improving at k=100, so the annotation is scoped rather than absolute.
-    ax.annotate("diminishing returns\nafter ~20 labels",
+    ax.annotate("returns diminish after ~20\nonly within a taxon and biome",
                 xy=(46, 0.868), xytext=(4.6, 0.985),
                 fontsize=9.5, color="#333", ha="left", va="top",
                 arrowprops=dict(arrowstyle="->", color="#333", lw=1.2,
