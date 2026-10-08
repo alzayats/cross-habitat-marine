@@ -120,6 +120,10 @@ def protocol_b():
     return out
 
 
+EXPECTED_RUNS = 18      # 6 model-adaptation combinations x 3 transfer targets
+EXPECTED_COMBOS = 6
+
+
 def protocol_c():
     """Few-shot curves, averaged over every model--adaptation combination.
 
@@ -129,10 +133,27 @@ def protocol_c():
     combinations and omitted the recommended one (DINOv2 + linear probe).
     """
     agg = defaultdict(list)
+    loaded = []
     for p in glob.glob("outputs/fewshot_curve/*/fewshot_curve.json"):
         d = json.load(open(p))
+        loaded.append(d)
         for k, trials in d["raw_results"].items():
             agg[(d["target"], int(k))].extend(t["balanced_accuracy"] for t in trials)
+
+    # A glob that matches fewer files than intended is not an error: it just
+    # averages a subset and reports it as the whole. That is exactly how the
+    # k*_trial*/results.json pattern silently dropped four of six combinations
+    # here. Fail loudly instead, naming what is missing.
+    seen = {(d["model"], d["adaptation"]) for d in loaded}
+    targets = {d["target"] for d in loaded}
+    if len(loaded) != EXPECTED_RUNS or len(seen) != EXPECTED_COMBOS:
+        raise SystemExit(
+            f"Protocol C load is incomplete: {len(loaded)} runs covering "
+            f"{len(seen)} model-adaptation combination(s) over {len(targets)} "
+            f"target(s); expected {EXPECTED_RUNS} runs over {EXPECTED_COMBOS} "
+            f"combinations.\n  found: {sorted(seen)}\n"
+            "  Averaging a subset would misreport the few-shot curves."
+        )
     return agg
 
 
