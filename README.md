@@ -4,7 +4,9 @@ Code for reproducing the experiments in:
 
 > **How many labels do you need? A decision framework for cross-habitat marine biodiversity monitoring**
 > Alzayat Saleh and Mostafa Rahimi Azghadi
-> Under review
+> *Ecological Solutions and Evidence*, accepted 2026
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23382946.svg)](https://doi.org/10.5281/zenodo.23382946)
 
 <p align="center">
   <img src="docs/graphical_abstract.jpg" width="100%"
@@ -249,12 +251,27 @@ Linear probe training completes in ~5 minutes per run. LoRA training takes ~40 m
 
 ## Citation
 
+The paper:
+
 ```bibtex
 @article{saleh2026crosshabitat,
   title={How many labels do you need? A decision framework for cross-habitat marine biodiversity monitoring},
   author={Saleh, Alzayat and Rahimi Azghadi, Mostafa},
+  journal={Ecological Solutions and Evidence},
+  year={2026}
+}
+```
+
+This code archive:
+
+```bibtex
+@misc{saleh2026codearchive,
+  title={Code and analysis for ``How many labels do you need? A decision framework for cross-habitat marine biodiversity monitoring''},
+  author={Saleh, Alzayat and Rahimi Azghadi, Mostafa},
   year={2026},
-  note={Under review}
+  publisher={Zenodo},
+  doi={10.5281/zenodo.23382946},
+  url={https://doi.org/10.5281/zenodo.23382946}
 }
 ```
 
